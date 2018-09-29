@@ -18,10 +18,8 @@
 @end
 
 typedef void (^BHNotificationResultHandler)(UIBackgroundFetchResult);
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
-typedef void (^BHNotificationPresentationOptionsHandler)(UNNotificationPresentationOptions options);
-typedef void (^BHNotificationCompletionHandler)();
-#endif
+typedef void (^BHNotificationPresentationOptionsHandler)(UNNotificationPresentationOptions options) API_AVAILABLE(ios(10.0));
+typedef void (^BHNotificationCompletionHandler)(void);
 
 @interface BHNotificationsItem : NSObject
 
@@ -30,13 +28,11 @@ typedef void (^BHNotificationCompletionHandler)();
 @property (nonatomic, strong) NSDictionary *userInfo;
 @property (nonatomic, copy) BHNotificationResultHandler notificationResultHander;
 @property (nonatomic, strong) UILocalNotification *localNotification;
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
-@property (nonatomic, strong) UNNotification *notification;
-@property (nonatomic, strong) UNNotificationResponse *notificationResponse;
-@property (nonatomic, copy) BHNotificationPresentationOptionsHandler notificationPresentationOptionsHandler;
+@property (nonatomic, strong) UNNotification *notification API_AVAILABLE(ios(10.0));
+@property (nonatomic, strong) UNNotificationResponse *notificationResponse API_AVAILABLE(ios(10.0));
+@property (nonatomic, copy) BHNotificationPresentationOptionsHandler notificationPresentationOptionsHandler API_AVAILABLE(ios(10.0));
 @property (nonatomic, copy) BHNotificationCompletionHandler notificationCompletionHandler;
-@property (nonatomic, strong) UNUserNotificationCenter *center;
-#endif
+@property (nonatomic, strong) UNUserNotificationCenter *center API_AVAILABLE(ios(10.0));
 
 @end
 
@@ -53,10 +49,8 @@ typedef void (^BHShortcutCompletionHandler)(BOOL);
 
 @interface BHShortcutItem : NSObject
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED > 80400
-@property(nonatomic, strong) UIApplicationShortcutItem *shortcutItem;
+@property(nonatomic, strong) UIApplicationShortcutItem *shortcutItem API_AVAILABLE(ios(9.0));
 @property(nonatomic, copy) BHShortcutCompletionHandler scompletionHandler;
-#endif
 
 @end
 

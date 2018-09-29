@@ -10,8 +10,8 @@
 #import "BHCommon.h"
 #import <UIKit/UIKit.h>
 
-typedef void (^handler)();
-typedef void (^watchdogFiredCallBack)();
+typedef void (^handler)(void);
+typedef void (^watchdogFiredCallBack)(void);
 
 
 @interface PingThread : NSThread

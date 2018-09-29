@@ -39,11 +39,9 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [[BHModuleManager sharedManager] triggerEvent:BHMSplashEvent];
     });
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
-    if ([UIDevice currentDevice].systemVersion.floatValue >= 10.0f) {
+    if (@available(iOS 10.0, *)) {
         [UNUserNotificationCenter currentNotificationCenter].delegate = self;
     }
-#endif
     
 #ifdef DEBUG
     [[BHTimeProfiler sharedTimeProfiler] saveTimeProfileDataIntoFile:@"BeeHiveTimeProfiler"];
@@ -53,15 +51,12 @@
 }
 
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80400 
-
 -(void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL))completionHandler
-{
+API_AVAILABLE(ios(9.0)) {
     [[BeeHive shareInstance].context.touchShortcutItem setShortcutItem: shortcutItem];
     [[BeeHive shareInstance].context.touchShortcutItem setScompletionHandler: completionHandler];
     [[BHModuleManager sharedManager] triggerEvent:BHMQuickActionEvent];
 }
-#endif
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
@@ -145,7 +140,6 @@
     [[BHModuleManager sharedManager] triggerEvent:BHMDidReceiveLocalNotificationEvent];
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
 - (void)application:(UIApplication *)application didUpdateUserActivity:(NSUserActivity *)userActivity
 {
     if([UIDevice currentDevice].systemVersion.floatValue >= 8.0f){
@@ -163,7 +157,7 @@
     }
 }
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
 {
     if([UIDevice currentDevice].systemVersion.floatValue >= 8.0f){
         [[BeeHive shareInstance].context.userActivityItem setUserActivity: userActivity];
@@ -188,22 +182,20 @@
         [[BHModuleManager sharedManager] triggerEvent:BHMHandleWatchKitExtensionRequestEvent];
     }
 }
-#endif
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler  API_AVAILABLE(ios(10.0)){
     [[BeeHive shareInstance].context.notificationsItem setNotification: notification];
     [[BeeHive shareInstance].context.notificationsItem setNotificationPresentationOptionsHandler: completionHandler];
     [[BeeHive shareInstance].context.notificationsItem setCenter:center];
     [[BHModuleManager sharedManager] triggerEvent:BHMWillPresentNotificationEvent];
-};
+}
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler {
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler  API_AVAILABLE(ios(10.0)){
     [[BeeHive shareInstance].context.notificationsItem setNotificationResponse: response];
     [[BeeHive shareInstance].context.notificationsItem setNotificationCompletionHandler:completionHandler];
     [[BeeHive shareInstance].context.notificationsItem setCenter:center];
     [[BHModuleManager sharedManager] triggerEvent:BHMDidReceiveNotificationResponseEvent];
-};
-#endif
+}
 
 @end
 
